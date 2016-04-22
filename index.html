@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sockets example</title>
+
+  </head>
+  <body bgcolor=grey>
+
+    <canvas id="demoCanvas" width="500" height="300" style="background-color: white;">
+        alternate content no canvas enabled.
+    </canvas>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+    <script>
+        // initialize stage from drawing library on the canvas
+        var stage = new createjs.Stage("demoCanvas");
+        // initialize sockets library
+        var socket = io();
+      
+        function create_stimulus(x, y) {
+            var circle = new createjs.Shape();
+            circle.graphics.beginFill("black").drawCircle(0, 0, 50);
+            circle.x = x;
+            circle.y = y;
+            stage.addChild(circle);
+            stage.update();
+        }
+  
+        // socket event handlers
+        socket.on('create circle', function(msg){
+            console.log(msg)
+            create_stimulus(msg.x, msg.y)
+        });
+      
+        // Actions
+        stage.on("stagemousedown", function(evt) {
+            console.log("the canvas was clicked at "+evt.stageX+","+evt.stageY);
+            socket.emit('background click', {x:evt.stageX,y:evt.stageY});
+        })      
+
+    </script>
+    
+    
+  </body>
+</html>
